@@ -19,8 +19,8 @@ public class CameraController : MonoBehaviour
 	[System.Serializable]
 	public class ScreenFollowSettings
 	{
-		public float sensivity = 10f;
-		public float screenBorder = 0.05f;
+		public float sensivity = 50f;
+		public float screenBorder = 0.02f;
 
 		[Space]
 		public bool moveMouseWhenOutOfScreen = false;
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
 		public bool canUseKeyboard = true;
 	
 		[Space]
-		public float keySensivity = 10f;
+		public float keySensivity = 100f;
 		
 		/// <summary>
 		/// "Note: when under 100, it is going to be unwanted shake"
@@ -47,6 +47,33 @@ public class CameraController : MonoBehaviour
 
 		[Space]
 		public ScreenFollowSettings screenFollowSettings;
+	}
+
+
+	[System.Serializable]
+	public class RotationSettings
+	{
+		[Header("Input Binding")]
+		[Tooltip("Note: You can off mouse input with MouseKeyCode.None")]
+		public MouseKeyCode mouseKey = MouseKeyCode.Middle;
+		[Tooltip("Note: You can off mouse input with KeyCode.None")]
+		public KeyCode leftKey = KeyCode.Q;
+		[Tooltip("Note: You can off mouse input with KeyCode.None")]
+		public KeyCode rightKey = KeyCode.E;
+
+
+		[Space]
+		public float mouseSensivity = 60f;
+		public float keySensivity = 50f;
+		public float speed = 40f;
+
+		[Space]
+		public float min = 20f;
+
+		[HideInInspector]
+		public float current = 35f;
+
+		public float max = 80f;
 	}
 
 	[System.Serializable]
@@ -63,43 +90,17 @@ public class CameraController : MonoBehaviour
 		public bool canUseScroll = true;
 
 		[Space]
-		public float mouseSensivity = 5f;
+		public float mouseSensivity = 70f;
 		public float keySensivity = 10f;
 		public float speed = 40f;
 
 		[Space]
 		public float min = 10f;
 		public float current = 35f;
-		public float max = 101f;
+		public float max = 200f;
 
 	}
 
-	[System.Serializable]
-	public class RotationSettings
-	{
-		[Header("Input Binding")]
-		[Tooltip("Note: You can off mouse input with MouseKeyCode.None")]
-		public MouseKeyCode mouseKey = MouseKeyCode.Middle;
-		[Tooltip("Note: You can off mouse input with KeyCode.None")]
-		public KeyCode leftKey = KeyCode.Q;
-		[Tooltip("Note: You can off mouse input with KeyCode.None")]
-		public KeyCode rightKey = KeyCode.E;
-
-
-		[Space]
-		public float mouseSensivity = 5f;
-		public float keySensivity = 10f;
-		public float speed = 40f;
-
-		[Space]
-		public float min = 10f;
-
-		[HideInInspector]
-		public float current = 35f;
-
-		public float max = 101f;
-	}
-		
 	private struct MovementData 
 	{
 		public static Vector3 firstPosition, targetPosition;
