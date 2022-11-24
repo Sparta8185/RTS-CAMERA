@@ -1,11 +1,10 @@
 using UnityEngine;
-using System;
-using UnityEngine.EventSystems;
+using UnityEditor;
 
 public class CameraController : MonoBehaviour
 {
-	#region Input Settings
-	public enum MouseKeyCode : int
+	#region :Input Settings
+  public enum MouseKeyCode : int
 	{
 		None = -1,
 		Left = 0,
@@ -105,6 +104,7 @@ public class CameraController : MonoBehaviour
 	{
 		public static Vector3 firstPosition, targetPosition;
 	}
+
 	private struct RotationData
 	{
 		public static bool isRotationTop,
@@ -142,6 +142,7 @@ public class CameraController : MonoBehaviour
 	/// Just a plane
 	/// </summary>
 	private Plane plane;
+	private new Camera camera;
 	#endregion
 
 	/// <summary>
@@ -149,6 +150,13 @@ public class CameraController : MonoBehaviour
 	/// </summary>
 	public void Awake()
 	{
+		camera = GetComponentInChildren<Camera>();
+		
+		if (!camera)
+		{
+			Debug.LogError("Please create camera in child");
+		}
+
 		SetCurrentData();
 		// Set Smooth Distance
 		SmoothDistance();
@@ -222,8 +230,6 @@ public class CameraController : MonoBehaviour
 	/// </summary>
 	private void SmoothDistance()
 	{
-		Camera camera = Camera.main;
-
 		// Setting the distance of camera's center
 		Vector3 cameraPosition = transform.position - camera.transform.forward * distanceSettings.current;
 
@@ -321,14 +327,14 @@ public class CameraController : MonoBehaviour
 		if (horizontal != 0 || vertical != 0)
 			FollowingObject = null;
 		
-		Vector3 forward = Camera.main.transform.forward;
+		Vector3 forward = camera.transform.forward;
 
 		// to not change the height
 		forward.y = 0f; 
 
 		forward.Normalize();
 
-		Vector3 right = Camera.main.transform.right;
+		Vector3 right = camera.transform.right;
 
 		right.y = 0f; // yuksekligin degismemesi gerekiyor
 		right.Normalize();
@@ -408,13 +414,13 @@ public class CameraController : MonoBehaviour
 		// if clicked middle
 		if (Input.GetMouseButtonDown(mouseKey)) 
 		{
-			RotationData.firstPosition = Camera.main.ScreenToViewportPoint(mousePosition);
+			RotationData.firstPosition = camera.ScreenToViewportPoint(mousePosition);
 			
 			return;
 		}
 
 		// Get the cucrrent mouse viewport point[UI]
-		Vector3 lastPosition = Camera.main.ScreenToViewportPoint(mousePosition);
+		Vector3 lastPosition = camera.ScreenToViewportPoint(mousePosition);
 		
 		// Get the difference between first point and current
 		Vector3 difference = RotationData.firstPosition - lastPosition;
@@ -449,6 +455,7 @@ public class CameraController : MonoBehaviour
 	#endregion
 
 	#region Object Follow
+  
 	private void FollowObject()
 	{
 		Vector3 newPosition = FollowingObject.transform.position;
@@ -485,7 +492,7 @@ public class CameraController : MonoBehaviour
 	{
 		Vector3 mousePosition = Input.mousePosition;
 		// For not detect the camera
-		mousePosition.z = Camera.main.nearClipPlane + 0.5f;
+		mousePosition.z = camera.nearClipPlane + 0.5f;
 
 		return mousePosition;
 	}
@@ -513,7 +520,37 @@ public class CameraController : MonoBehaviour
 		MovementData.targetPosition = transform.localPosition;
 		RotationData.targetRotation = transform.localEulerAngles;
 	}
+
+	public void SetCameraDefaultPosition()
+	{
+		Camera camera = transform.GetComponentInChildren<Camera>();
+		if (!camera) return;
+
+		float distance = distanceSettings.current;
+		float normal = RotationData.targetRotation.x;
+
+		float sin = distance * Mathf.Sin(normal);
+		float cos = distance * Mathf.Cos(normal);
+
+		Vector3 cameraPosition = new Vector3(cos, 0, sin);
+		camera.transform.localPosition -= cameraPosition;
+
+		//float cos = 
+		//camera.transform.localPosition = cameraSystemObject.transform.position - new Vector3() 
+	}
+
 	#endregion
 
+	#region Menu Item
 
+	[MenuItem("GameObject/Camera System")]
+	public static void CreateCameraSystem()
+	{
+		GameObject prefab = (GameObject)Resources.Load("Prefabs/Camera System");
+
+		GameObject cameraSystem = Instantiate(prefab);
+		cameraSystem.name = "Camera System";
+	}
+
+	#endregion
 }

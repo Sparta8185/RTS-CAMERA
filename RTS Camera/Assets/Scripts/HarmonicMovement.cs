@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HarmonicMovement : MonoBehaviour
@@ -21,6 +19,7 @@ public class HarmonicMovement : MonoBehaviour
 	{
 		if (!Application.isPlaying)
 			startPoint = transform.position;
+
 
 		points = new Vector3[2]
 		{
